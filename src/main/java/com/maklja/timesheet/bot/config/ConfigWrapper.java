@@ -1,5 +1,6 @@
 package com.maklja.timesheet.bot.config;
 
+import com.maklja.timesheet.bot.model.EmailConfig;
 import com.maklja.timesheet.bot.model.Project;
 import io.helidon.config.Config;
 import io.helidon.config.ConfigSources;
@@ -17,6 +18,7 @@ public class ConfigWrapper {
         config = Config.builder()
                 .addParser(YamlConfigParser.create())
                 .addMapper(new ProjectConfigMapper())
+                .addMapper(new EmailConfigMapper())
                 .addSource(ConfigSources.classpath("application.yaml"))
                 .build();
     }
@@ -35,6 +37,10 @@ public class ConfigWrapper {
 
     public String getPassword() {
         return config.get("timesheet.password").asString().orElseThrow();
+    }
+
+    public EmailConfig getEmailConfig() {
+        return config.get("email").as(EmailConfig.class).orElseThrow();
     }
 
     public Map<Integer, List<Project>> getProjectPerDay() {

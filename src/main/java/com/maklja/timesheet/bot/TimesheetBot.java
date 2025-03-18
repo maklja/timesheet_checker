@@ -1,9 +1,10 @@
 package com.maklja.timesheet.bot;
 
 
-import com.maklja.timesheet.bot.action.ChargeHoursActionPayload;
+import com.maklja.timesheet.bot.action.SendEmailAction;
+import com.maklja.timesheet.bot.model.ChargeHoursActionPayload;
 import com.maklja.timesheet.bot.config.ConfigWrapper;
-import com.maklja.timesheet.bot.model.ChargeHoursAction;
+import com.maklja.timesheet.bot.action.ChargeHoursAction;
 import io.helidon.scheduling.Scheduling;
 
 import java.time.Instant;
@@ -11,6 +12,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public class TimesheetBot {
     private static final Logger LOGGER = Logger.getLogger(TimesheetBot.class.getName());
@@ -56,5 +58,11 @@ public class TimesheetBot {
         final var action = new ChargeHoursAction();
         action.execute(actionPayload);
         LOGGER.log(Level.INFO, "Hours successfully charged at {0}", formatedTimestamp);
+        final var sendEmailAction = new SendEmailAction(config.getEmailConfig());
+        final var projectsEmail = projects.stream()
+                .map(project -> "%s\t%s\t%s\t%s".formatted(project.clientId(), project.projectId(), project.categoryId(), project.hours()))
+                .collect(Collectors.joining("\n"));
+        sendEmailAction.execute("Hours charged: %s".formatted(formatedTimestamp), projectsEmail);
+        LOGGER.log(Level.INFO, "Email sent at {0}", formatedTimestamp);
     }
 }

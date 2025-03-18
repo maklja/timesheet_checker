@@ -1,6 +1,6 @@
-package com.maklja.timesheet.bot.model;
+package com.maklja.timesheet.bot.action;
 
-import com.maklja.timesheet.bot.action.ChargeHoursActionPayload;
+import com.maklja.timesheet.bot.model.ChargeHoursActionPayload;
 import com.microsoft.playwright.*;
 
 import java.time.ZoneId;

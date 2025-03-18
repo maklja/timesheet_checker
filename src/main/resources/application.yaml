@@ -34,3 +34,9 @@ timesheet:
         projectId: 9750
         categoryId: 154
         hours: 2
+
+email:
+  url: https://api.mailgun.net/v3/sandbox93bb230632764f1f92945640e9b3bbee.mailgun.org/messages
+  from: Timesheet bot <postmaster@sandbox93bb230632764f1f92945640e9b3bbee.mailgun.org>
+  apiKey:
+  to:

@@ -1,6 +1,4 @@
-package com.maklja.timesheet.bot.action;
-
-import com.maklja.timesheet.bot.model.Project;
+package com.maklja.timesheet.bot.model;
 
 import java.time.Instant;
 import java.util.List;
