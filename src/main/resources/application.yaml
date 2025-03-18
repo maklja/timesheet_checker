@@ -1,0 +1,36 @@
+timesheet:
+  scheduled: 0 15 8 ? * MON-FRI
+  url: https://timesheet.vegait.rs/
+  username:
+  password:
+  projects:
+    1:
+      - clientId: 1432
+        projectId: 9765
+        categoryId: 154
+        hours: 8
+    2:
+      - clientId: 1432
+        projectId: 9765
+        categoryId: 154
+        hours: 8
+    3:
+      - clientId: 1432
+        projectId: 9765
+        categoryId: 154
+        hours: 8
+    4:
+      - clientId: 1432
+        projectId: 9765
+        categoryId: 154
+        hours: 8
+    5:
+      - clientId: 1432
+        projectId: 9765
+        categoryId: 154
+        hours: 8
+
+      - clientId: 2658
+        projectId: 9750
+        categoryId: 154
+        hours: 2
