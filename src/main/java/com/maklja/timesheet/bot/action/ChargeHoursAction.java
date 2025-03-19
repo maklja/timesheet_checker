@@ -66,6 +66,7 @@ public class ChargeHoursAction {
 
         final var saveButton = page.locator(SAVE_BUTTON_SELECTOR);
         saveButton.click();
+        page.waitForURL(payload.timesheetUrl());
     }
 
     private static void loginAction(final ChargeHoursActionPayload payload, final Page page) {
