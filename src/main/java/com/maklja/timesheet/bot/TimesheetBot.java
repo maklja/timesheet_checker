@@ -55,12 +55,17 @@ public class TimesheetBot {
                 timestamp,
                 projects
         );
-        final var action = new ChargeHoursAction();
-        action.execute(actionPayload);
+        final var chargeHoursAction = new ChargeHoursAction();
+        final var actionResult = chargeHoursAction.execute(actionPayload);
         LOGGER.log(Level.INFO, "Hours successfully charged at {0}", formatedTimestamp);
         final var sendEmailAction = new SendEmailAction(config.getEmailConfig());
-        final var projectsEmail = projects.stream()
-                .map(project -> "%s\t%s\t%s\t%s".formatted(project.clientId(), project.projectId(), project.categoryId(), project.hours()))
+        final var projectsEmail = actionResult.stream()
+                .map(project -> "%s\t%s\t%s\t%s".formatted(
+                        project.clientName(),
+                        project.projectName(),
+                        project.categoryName(),
+                        project.hours())
+                )
                 .collect(Collectors.joining("\n"));
         sendEmailAction.execute("Hours charged: %s".formatted(formatedTimestamp), projectsEmail);
         LOGGER.log(Level.INFO, "Email sent at {0}", formatedTimestamp);
