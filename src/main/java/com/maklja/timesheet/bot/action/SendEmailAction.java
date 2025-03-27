@@ -3,12 +3,12 @@ package com.maklja.timesheet.bot.action;
 import com.maklja.timesheet.bot.model.EmailConfig;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
-
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 
 public class SendEmailAction {
-    private static final Logger LOGGER = Logger.getLogger(SendEmailAction.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(SendEmailAction.class);
+
     private final EmailConfig config;
 
     public SendEmailAction(final EmailConfig emailConfig) {
@@ -26,9 +26,9 @@ public class SendEmailAction {
                     .asJson();
             final var resp = request.getBody();
             final var msg = resp.getObject().get("message");
-            LOGGER.log(Level.INFO, "Email sent: {0}", msg);
+            LOGGER.info("Email sent: {}", msg);
         } catch (final UnirestException e) {
-            LOGGER.log(Level.SEVERE, "Failed to send email", e);
+            LOGGER.error("Failed to send email", e);
             throw new RuntimeException(e);
         }
     }

@@ -4,23 +4,31 @@ import com.maklja.timesheet.bot.model.EmailConfig;
 import com.maklja.timesheet.bot.model.Project;
 import io.helidon.config.Config;
 import io.helidon.config.ConfigSources;
+import io.helidon.config.PollingStrategies;
 import io.helidon.config.yaml.YamlConfigParser;
 
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class ConfigWrapper {
 
-    private final Config config;
+    private Config config;
 
     public ConfigWrapper() {
         config = Config.builder()
                 .addParser(YamlConfigParser.create())
                 .addMapper(new ProjectConfigMapper())
                 .addMapper(new EmailConfigMapper())
+                .addSource(ConfigSources.file("/etc/timesheet/config.yaml")
+                        .pollingStrategy(PollingStrategies.regular(Duration.ofMinutes(15)))
+                        .optional()
+                )
                 .addSource(ConfigSources.classpath("application.yaml"))
                 .build();
+
+        config.onChange(newConfig -> config = newConfig);
     }
 
     public String getUrl() {
