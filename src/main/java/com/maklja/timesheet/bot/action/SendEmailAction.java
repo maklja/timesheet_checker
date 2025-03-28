@@ -17,6 +17,7 @@ public class SendEmailAction {
 
     public void execute(final String subject, final String text) {
         try {
+            LOGGER.info("Sending email {} from {} to {}.", subject, config.from(), String.join(", ", config.to()));
             final var request = Unirest.post(config.url())
                     .basicAuth("api", config.apiKey())
                     .queryString("from", config.from())

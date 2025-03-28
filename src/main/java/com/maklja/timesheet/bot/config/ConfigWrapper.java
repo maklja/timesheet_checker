@@ -13,7 +13,8 @@ import java.util.List;
 import java.util.Map;
 
 public class ConfigWrapper {
-
+    private static final String CONFIG_PATH = "/etc/timesheet/config.yaml";
+    private static final Duration REFRESH_DURATION = Duration.ofMinutes(15);
     private Config config;
 
     public ConfigWrapper() {
@@ -21,8 +22,8 @@ public class ConfigWrapper {
                 .addParser(YamlConfigParser.create())
                 .addMapper(new ProjectConfigMapper())
                 .addMapper(new EmailConfigMapper())
-                .addSource(ConfigSources.file("/etc/timesheet/config.yaml")
-                        .pollingStrategy(PollingStrategies.regular(Duration.ofMinutes(15)))
+                .addSource(ConfigSources.file(CONFIG_PATH)
+                        .pollingStrategy(PollingStrategies.regular(REFRESH_DURATION))
                         .optional()
                 )
                 .addSource(ConfigSources.classpath("application.yaml"))
@@ -33,10 +34,6 @@ public class ConfigWrapper {
 
     public String getUrl() {
         return config.get("timesheet.url").asString().orElseThrow();
-    }
-
-    public String getScheduledCron() {
-        return config.get("timesheet.scheduled").asString().orElseThrow();
     }
 
     public String getUsername() {

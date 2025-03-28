@@ -1,5 +1,4 @@
 timesheet:
-  scheduled: 0 15 8 ? * MON-FRI
   url: https://timesheet.vegait.rs/
   username:
   password:
@@ -38,5 +37,5 @@ timesheet:
 email:
   url: https://api.mailgun.net/v3/sandbox93bb230632764f1f92945640e9b3bbee.mailgun.org/messages
   from: Timesheet bot <postmaster@sandbox93bb230632764f1f92945640e9b3bbee.mailgun.org>
-  apiKey:
-  to:
+  apiKey: ${EMAIL_API_KEY}
+  to: ${EMAIL_TO}

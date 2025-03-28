@@ -5,7 +5,6 @@ import com.maklja.timesheet.bot.action.SendEmailAction;
 import com.maklja.timesheet.bot.model.ChargeHoursActionPayload;
 import com.maklja.timesheet.bot.config.ConfigWrapper;
 import com.maklja.timesheet.bot.action.ChargeHoursAction;
-import io.helidon.scheduling.Scheduling;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,22 +19,11 @@ public class TimesheetBot {
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter
             .ofPattern("dd-MM-yyyy HH:mm")
             .withZone(ZoneId.systemDefault());
-    private static final Object lock = new Object();
 
     public static void main(final String[] args) {
         LOGGER.info("Timesheet bot started");
-        synchronized (lock) {
-            final var config = new ConfigWrapper();
-            Scheduling.cron()
-                    .expression(config.getScheduledCron())
-                    .task(inv -> chargeHours(config))
-                    .build();
-
-            try {
-                lock.wait();
-            } catch (final InterruptedException ignored) {
-            }
-        }
+        chargeHours(new ConfigWrapper());
+        LOGGER.info("Timesheet bot completed");
     }
 
     private static void chargeHours(final ConfigWrapper config) {

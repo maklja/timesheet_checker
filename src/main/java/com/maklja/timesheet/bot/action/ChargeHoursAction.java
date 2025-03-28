@@ -17,6 +17,7 @@ public class ChargeHoursAction {
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter
             .ofPattern("yyyy-M-d")
             .withZone(ZoneId.systemDefault());
+    private static final String USER_LABEL_SELECTOR = "body > div.container > header > div > ul > li:nth-child(1) > a";
     private static final String USERNAME_INPUT_SELECTOR = "#UserName";
     private static final String PASSWORD_INPUT_SELECTOR = "#password";
     private static final String PROJECT_INPUTS_SELECTOR = "#js-timesheet > tr:nth-child(%s) > td:nth-child(%s) > select";
@@ -41,7 +42,9 @@ public class ChargeHoursAction {
 
     private static List<ChargeHoursActionResult> chargeHoursAction(final ChargeHoursActionPayload payload, final Page page) {
         final var chargeDate = DATE_FORMATTER.format(payload.timestamp());
-        page.navigate("%s/Timesheet?date=%s".formatted(payload.timesheetUrl(), chargeDate));
+        final var timesheetUrl = "%s/Timesheet?date=%s".formatted(payload.timesheetUrl(), chargeDate);
+        LOGGER.info("Redirecting to location {}", timesheetUrl);
+        page.navigate(timesheetUrl);
 
         final var projects = payload.projects();
         final var actionResults = new ArrayList<ChargeHoursActionResult>(projects.size());
@@ -102,5 +105,8 @@ public class ChargeHoursAction {
         final var passwordField = page.locator(PASSWORD_INPUT_SELECTOR);
         passwordField.fill(payload.password());
         passwordField.press("Enter");
+
+        final var user = String.join(", ", page.locator(USER_LABEL_SELECTOR).allInnerTexts());
+        LOGGER.info("User {} logged in completed", user);
     }
 }
