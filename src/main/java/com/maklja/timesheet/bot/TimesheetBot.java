@@ -1,6 +1,5 @@
 package com.maklja.timesheet.bot;
 
-
 import com.maklja.timesheet.bot.action.SendEmailAction;
 import com.maklja.timesheet.bot.model.ChargeHoursActionPayload;
 import com.maklja.timesheet.bot.config.ConfigWrapper;
@@ -37,26 +36,29 @@ public class TimesheetBot {
             LOGGER.warn("Projects not found for data {}", formatedTimestamp);
             return;
         }
-        final var actionPayload = new ChargeHoursActionPayload(
-                config.getUrl(),
-                config.getUsername(),
-                config.getPassword(),
-                timestamp,
-                projects
-        );
-        final var chargeHoursAction = new ChargeHoursAction();
-        final var actionResult = chargeHoursAction.execute(actionPayload);
-        LOGGER.info("Hours successfully charged at {}", formatedTimestamp);
         final var sendEmailAction = new SendEmailAction(config.getEmailConfig());
-        final var projectsEmail = actionResult.stream()
-                .map(project -> "%s\t%s\t%s\t%s".formatted(
-                        project.clientName(),
-                        project.projectName(),
-                        project.categoryName(),
-                        project.hours())
-                )
-                .collect(Collectors.joining("\n"));
-        sendEmailAction.execute("Hours charged: %s".formatted(formatedTimestamp), projectsEmail);
-        LOGGER.info("Email sent at {}", formatedTimestamp);
+        try {
+            final var actionPayload = new ChargeHoursActionPayload(
+                    config.getUrl(),
+                    config.getUsername(),
+                    config.getPassword(),
+                    timestamp,
+                    projects);
+            final var chargeHoursAction = new ChargeHoursAction();
+            final var actionResult = chargeHoursAction.execute(actionPayload);
+            LOGGER.info("Hours successfully charged at {}", formatedTimestamp);
+            final var projectsEmail = actionResult.stream()
+                    .map(project -> "%s\t%s\t%s\t%s".formatted(
+                            project.clientName(),
+                            project.projectName(),
+                            project.categoryName(),
+                            project.hours()))
+                    .collect(Collectors.joining("\n"));
+            sendEmailAction.execute("Hours charged: %s".formatted(formatedTimestamp), projectsEmail);
+            LOGGER.info("Email sent at {}", formatedTimestamp);
+        } catch (final Exception e) {
+            LOGGER.error("Error charging hours", e);
+            sendEmailAction.execute("Error charging hours", e.getMessage());
+        }
     }
 }
